@@ -1,0 +1,37 @@
+<div class="part-card">
+    <div class="card-image" style="background: linear-gradient(135deg, @(Category?.Color ?? "#667eea")15 0%, @(Category?.Color ?? "#667eea")05 100%);">
+        <span class="card-emoji">@Part.Emoji</span>
+
+        @if (!string.IsNullOrEmpty(Part.Tag))
+        {
+            <div class="card-tag" style="background-color: @(Category?.Color ?? "#667eea");">
+                @Part.Tag
+            </div>
+        }
+
+        <div class="card-overlay" style="background: linear-gradient(135deg, @(Category?.Color ?? "#667eea")40 0%, @(Category?.Color ?? "#667eea")20 100%);">
+            <button class="card-detail-btn" style="background-color: @(Category?.Color ?? "#667eea");">
+                查看详情
+            </button>
+        </div>
+    </div>
+
+    <div class="card-info">
+        <h3 class="card-name">@Part.Name</h3>
+        <p class="card-desc">@Part.Description</p>
+        <div class="card-footer">
+            <span class="card-price" style="color: @(Category?.Color ?? "#667eea");">@Part.Price</span>
+            <button class="card-fav-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Part Part { get; set; } = default!;
+    [Parameter] public Category? Category { get; set; }
+    [Parameter] public bool IsDark { get; set; }
+}

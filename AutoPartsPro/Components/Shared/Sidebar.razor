@@ -1,0 +1,70 @@
+<aside class="sidebar">
+    <!-- Search -->
+    <div class="sidebar-search">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input type="text"
+                   placeholder="搜索零部件..."
+                   @bind="_searchQuery"
+                   @bind:event="oninput" />
+        </div>
+    </div>
+
+    <!-- Category list -->
+    <nav class="sidebar-nav">
+        <!-- All items -->
+        <button class="nav-item @(SelectedCategory == null ? "active" : "")"
+                @onclick="SelectAll">
+            <div class="nav-icon-box @(SelectedCategory == null ? "active" : "")">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+            </div>
+            <span class="nav-text">全部零部件</span>
+        </button>
+
+        @foreach (var category in FilteredCategories)
+        {
+            var catId = category.Id;
+            <button class="nav-item @(SelectedCategory == catId ? "active" : "")"
+                    style="--cat-color: @category.Color"
+                    @onclick="() => OnSelectCategory.InvokeAsync(catId)">
+                <div class="nav-icon-box @(SelectedCategory == catId ? "active" : "")"
+                     style="--cat-color: @category.Color">
+                    <CategoryIcon IconType="@category.IconType" Color="@(SelectedCategory == catId ? category.Color : "currentColor")" />
+                </div>
+                <span class="nav-text">@category.Name</span>
+            </button>
+        }
+
+        @if (!FilteredCategories.Any())
+        {
+            <div class="no-results">未找到匹配的零部件类型</div>
+        }
+    </nav>
+</aside>
+
+@code {
+    [Parameter] public bool IsDark { get; set; }
+    [Parameter] public string? SelectedCategory { get; set; }
+    [Parameter] public EventCallback<string?> OnSelectCategory { get; set; }
+
+    private string _searchQuery = string.Empty;
+
+    private List<Category> FilteredCategories =>
+        CategoryData.All.Where(c =>
+            c.Name.Contains(_searchQuery) ||
+            c.NameEn.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+
+    private async Task SelectAll()
+    {
+        await OnSelectCategory.InvokeAsync(null);
+    }
+}
