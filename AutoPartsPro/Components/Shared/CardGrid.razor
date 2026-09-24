@@ -1,0 +1,51 @@
+<div class="card-grid-container">
+    <!-- Header -->
+    <div class="grid-header">
+        <h1 class="grid-title">
+            @(SelectedCategory != null
+                ? CategoryData.All.FirstOrDefault(c => c.Id == SelectedCategory)?.Name
+                : "全部零部件")
+        </h1>
+        <p class="grid-subtitle">
+            @if (SelectedCategory != null)
+            {
+                var cat = CategoryData.All.FirstOrDefault(c => c.Id == SelectedCategory);
+                <text>@cat?.NameEn · @FilteredParts.Count 件商品</text>
+            }
+            else
+            {
+                <text>@FilteredParts.Count 件精选定制零部件</text>
+            }
+        </p>
+    </div>
+
+    <!-- Card grid -->
+    @if (FilteredParts.Any())
+    {
+        <div class="parts-grid">
+            @foreach (var part in FilteredParts)
+            {
+                var category = CategoryData.All.FirstOrDefault(c => c.Id == part.CategoryId);
+                <PartCard Part="part" Category="category" IsDark="IsDark" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p class="empty-text">该分类暂无零部件</p>
+            <p class="empty-subtext">请选择其他分类查看</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public bool IsDark { get; set; }
+    [Parameter] public string? SelectedCategory { get; set; }
+
+    private List<Part> FilteredParts =>
+        SelectedCategory != null
+            ? PartData.All.Where(p => p.CategoryId == SelectedCategory).ToList()
+            : PartData.All;
+}
